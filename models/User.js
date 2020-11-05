@@ -1,5 +1,3 @@
-const { mongo } = require("mongoose");
-
 const { Schema, model } = require("mongoose");
 const shortid = require("shortid");
 
