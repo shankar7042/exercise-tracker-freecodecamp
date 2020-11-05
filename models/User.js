@@ -1,5 +1,4 @@
 const { Schema, model } = require("mongoose");
-const shortid = require("shortid");
 
 const exerciseSchema = new Schema({
   description: String,
@@ -8,10 +7,6 @@ const exerciseSchema = new Schema({
 });
 
 const UserSchema = new Schema({
-  _id: {
-    type: String,
-    default: shortid.generate,
-  },
   username: {
     type: String,
     required: true,

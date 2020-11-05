@@ -49,7 +49,7 @@ app.post("/api/exercise/add", async (req, res, next) => {
     if (!date) {
       date = new Date().toDateString();
     } else {
-      date = new Date(date);
+      date = new Date(date).toDateString();
     }
     user.log.push({
       description,
@@ -111,6 +111,16 @@ app.get("/api/exercise/log", async (req, res, next) => {
     } catch (error) {
       return next(error);
     }
+  }
+});
+
+app.get("/api/exercise/users", async (req, res, next) => {
+  try {
+    let users = await User.find({});
+    users = users.map(({ _id, username }) => ({ _id, username }));
+    return res.send(users);
+  } catch (error) {
+    return next(error);
   }
 });
 
