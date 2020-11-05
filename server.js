@@ -73,6 +73,47 @@ app.post("/api/exercise/add", async (req, res, next) => {
   }
 });
 
+app.get("/api/exercise/log", async (req, res, next) => {
+  // /api/exercise/log?{userId}[&from][&to][&limit]
+  // { } = required, [ ] = optional
+  // from, to = dates (yyyy-mm-dd); limit = number
+  const { userId, from, to, limit } = req.query;
+
+  if (!userId) {
+    return next({ message: "Unknown userId" });
+  } else {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return next({ message: "Unknown userId" });
+      }
+
+      const { _id, username, log: logs } = user;
+      const result = { _id, username, log: logs };
+      let date = null;
+      if (from) {
+        date = new Date(from);
+        if (!(date.toString() === "Invalid Date")) {
+          result.log = result.log.filter((log) => new Date(log.date) >= date);
+        }
+      }
+      if (to) {
+        date = new Date(to);
+        if (!(date.toString() === "Invalid Date")) {
+          result.log = result.log.filter((log) => new Date(log.date) <= date);
+        }
+      }
+      if (limit && limit < result.log.length) {
+        result.log = result.log.slice(0, limit);
+      }
+      result.count = result.log.length;
+      return res.json(result);
+    } catch (error) {
+      return next(error);
+    }
+  }
+});
+
 // Not found middleware
 app.use((req, res, next) => {
   return next({ status: 404, message: "not found" });
